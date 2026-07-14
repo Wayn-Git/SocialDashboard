@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     
     # Security
     JWT_SECRET_KEY: str = "super-secret-rs256-key"
-    KMS_KEY_ID: str = "arn:aws:kms:us-east-1:123456789012:key/abcdef"
+    MASTER_ENCRYPTION_KEY: str = "change-this-to-a-long-random-string-in-production"
     
     # Meta
     FB_APP_ID: str = "your-fb-app-id"

@@ -1,34 +1,30 @@
 import os
-import boto3
+import hashlib
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from app.config import settings
 
 class TokenVault:
     def __init__(self):
-        self.kms = boto3.client('kms')
-        self.key_id = settings.KMS_KEY_ID
+        # Hash the master key to ensure it's exactly 32 bytes for AES-256
+        self.key = hashlib.sha256(settings.MASTER_ENCRYPTION_KEY.encode()).digest()
 
     def encrypt(self, plaintext: str) -> tuple[bytes, bytes, bytes]:
-        response = self.kms.generate_data_key(KeyId=self.key_id, KeySpec='AES_256')
-        plaintext_data_key = response['Plaintext']
-        encrypted_data_key = response['CiphertextBlob']
-        
         iv = os.urandom(12)
-        aesgcm = AESGCM(plaintext_data_key)
+        aesgcm = AESGCM(self.key)
         ciphertext = aesgcm.encrypt(iv, plaintext.encode(), None)
         
-        del plaintext_data_key
-        return (iv + ciphertext, encrypted_data_key, iv)
+        # We return a dummy empty byte string for the data_key to keep 
+        # database schema compatibility with the old KMS envelope encryption.
+        dummy_data_key = b""
+        
+        return (iv + ciphertext, dummy_data_key, iv)
 
     def decrypt(self, ciphertext: bytes, encrypted_data_key: bytes, iv: bytes) -> str:
-        response = self.kms.decrypt(CiphertextBlob=encrypted_data_key)
-        plaintext_data_key = response['Plaintext']
-        
-        aesgcm = AESGCM(plaintext_data_key)
-        token_ct = ciphertext[len(iv):] if iv in ciphertext else ciphertext
+        aesgcm = AESGCM(self.key)
+        # Strip the IV if it was prepended to the ciphertext
+        token_ct = ciphertext[len(iv):] if ciphertext.startswith(iv) else ciphertext
         plaintext = aesgcm.decrypt(iv, token_ct, None).decode()
         
-        del plaintext_data_key
         return plaintext
 
 vault = TokenVault()
