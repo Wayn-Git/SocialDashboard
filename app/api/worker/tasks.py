@@ -6,7 +6,7 @@ from app.api.worker.celery_app import app
 from app.database import SessionLocal
 from app.models import Employee, SocialPage, SyncJob, SyncStatus, SyncJobType
 from app.security import vault
-from app.integrations.platforms import FacebookAPI, LinkedInAPI, PlatformAPIError
+from app.api.integrations.platforms import FacebookAPI, LinkedInAPI, PlatformAPIError
 
 
 def get_db():
