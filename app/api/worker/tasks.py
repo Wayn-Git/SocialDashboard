@@ -2,7 +2,7 @@
 import httpx
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from app.worker.celery_app import app
+from app.api.worker.celery_app import app
 from app.database import SessionLocal
 from app.models import Employee, SocialPage, SyncJob, SyncStatus, SyncJobType
 from app.security import vault

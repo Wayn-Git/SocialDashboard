@@ -26,7 +26,7 @@ services:
     name: social-dashboard-worker
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: celery -A app.worker.celery_app worker --beat -l info -Q fb-queue,ig-queue,li-queue
+    startCommand: celery -A app.api.worker.celery_app worker --beat -l info -Q fb-queue,ig-queue,li-queue
     envVars:
       - key: DATABASE_URL
         sync: false
