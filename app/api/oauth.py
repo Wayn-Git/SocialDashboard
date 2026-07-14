@@ -15,7 +15,10 @@ from app.security import vault
 from app.api.worker.tasks import sync_employee
 
 router = APIRouter()
-redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
+redis_url = settings.REDIS_URL
+if "CERT_NONE" in redis_url:
+    redis_url = redis_url.replace("CERT_NONE", "none")
+redis_client = redis.from_url(redis_url, decode_responses=True)
 
 @router.get("/facebook/start")
 def fb_start(employee_id: uuid.UUID = Query(...)):
