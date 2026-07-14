@@ -18,6 +18,8 @@ services:
         sync: false
       - key: FB_REDIRECT_URI
         sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.8
 
   # The Background Celery Worker (Combined with Beat to save free-tier limits)
   - type: worker
