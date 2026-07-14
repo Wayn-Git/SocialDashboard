@@ -57,7 +57,9 @@ def fb_callback(code: str, state: str, db: Session = Depends(get_db)):
             }
         )
         if token_resp.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to exchange code for token")
+            error_details = token_resp.text
+            print(f"Facebook Token Error: {error_details}")
+            raise HTTPException(status_code=400, detail=f"Failed to exchange code for token. Facebook said: {error_details}")
             
         token_data = token_resp.json()
         short_lived_token = token_data.get("access_token")
