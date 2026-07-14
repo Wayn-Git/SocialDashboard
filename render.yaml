@@ -1,0 +1,32 @@
+version: "1"
+
+services:
+  # The main FastAPI Web Server
+  - type: web
+    name: social-dashboard-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: FB_APP_ID
+        sync: false
+      - key: FB_APP_SECRET
+        sync: false
+      - key: FB_REDIRECT_URI
+        sync: false
+
+  # The Background Celery Worker (Combined with Beat to save free-tier limits)
+  - type: worker
+    name: social-dashboard-worker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.worker.celery_app worker --beat -l info -Q fb-queue,ig-queue,li-queue
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false

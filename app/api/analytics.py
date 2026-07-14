@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.database import get_db
-from app.models import Post, PostMetric
+from app.models import Post, PostMetric, SocialPage
 from datetime import datetime, timedelta
 
 router = APIRouter()

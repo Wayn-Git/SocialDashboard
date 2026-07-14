@@ -66,6 +66,8 @@ class EmployeeOAuthToken(Base):
     expires_at = Column(DateTime(timezone=True), nullable=False)
     last_refreshed_at = Column(DateTime(timezone=True))
     refresh_status = Column(Enum(TokenStatus), default=TokenStatus.active)
+    provider_user_id = Column(String(128))
+    provider_username = Column(String(255))
 
 class SocialPage(Base):
     __tablename__ = "social_pages"
@@ -76,6 +78,7 @@ class SocialPage(Base):
     platform_page_id = Column(String(128), nullable=False)
     page_name = Column(String(255), nullable=False)
     enc_page_access_token = Column(BYTEA)
+    enc_data_key = Column(BYTEA)
     page_token_iv = Column(BYTEA)
     ig_business_account_id = Column(String(128))
     is_active = Column(Boolean, default=True)
